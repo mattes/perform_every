@@ -1,3 +1,6 @@
+require "minitest/mock"
+require "byebug"
+
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 

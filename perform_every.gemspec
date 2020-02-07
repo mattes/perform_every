@@ -9,23 +9,17 @@ Gem::Specification.new do |spec|
   spec.version     = PerformEvery::VERSION
   spec.authors     = ["Matthias Kadenbach"]
   spec.email       = ["matthias.kadenbach@gmail.com"]
-  spec.homepage    = "TODO"
-  spec.summary     = "TODO: Summary of PerformEvery."
-  spec.description = "TODO: Description of PerformEvery."
+  spec.homepage    = "https://github.com/mattes/perform_every"
+  spec.summary     = "Cron for ActiveJob"
+  spec.description = "Runs jobs at specified intervals."
   spec.license     = "MIT"
 
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
-  end
-
-  spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  spec.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "rails", "~> 6.0.2", ">= 6.0.2.1"
+  spec.add_dependency "fugit", "~> 1.1"
+  spec.add_dependency 'with_advisory_lock', '~> 3.2'
 
-  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "pg"
+  spec.add_development_dependency "byebug"
 end
