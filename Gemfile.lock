@@ -147,9 +147,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug
+  byebug (~> 11.1, >= 11.1.1)
   perform_every!
-  pg
+  pg (~> 1.2.2)
 
 BUNDLED WITH
    2.1.2

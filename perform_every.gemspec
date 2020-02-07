@@ -20,6 +20,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "fugit", "~> 1.1"
   spec.add_dependency 'with_advisory_lock', '~> 3.2'
 
-  spec.add_development_dependency "pg"
-  spec.add_development_dependency "byebug"
+  spec.add_development_dependency "pg", '~> 1.2.2'
+  spec.add_development_dependency "byebug", '~> 11.1', '>= 11.1.1'
 end
