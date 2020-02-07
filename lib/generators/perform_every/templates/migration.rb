@@ -1,4 +1,4 @@
-class CreatePerformEvery < ActiveRecord::Migration[4.2]
+class CreatePerformEvery < ActiveRecord::Migration[6.0]
   def change
     create_table :perform_every do |t|
       t.string :job_name
