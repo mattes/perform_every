@@ -1,9 +1,9 @@
-require 'test_helper'
+require "test_helper"
 
 class PerformEvery::Test < ActiveSupport::TestCase
   setup do
     Zeitwerk::Loader.eager_load_all # make sure all jobs are loaded
-    PerformEvery.dry_run = true 
+    PerformEvery.dry_run = true
   end
 
   test "truth" do
@@ -11,16 +11,16 @@ class PerformEvery::Test < ActiveSupport::TestCase
   end
 
   test "job can be scheduled normally somewhere in app" do
-    assert_equal "example job without perform_every and perform_at", ExampleJob1.perform_now 
-    assert_equal "example job with perform_every", ExampleJob2.perform_now 
-    assert_equal "example job with perform_at", ExampleJob3.perform_now 
-    assert_equal "example job with perform_every and perform_at", ExampleJob4.perform_now 
-    assert_equal "example job with multiple perform_every and perform_at", ExampleJob5.perform_now 
+    assert_equal "example job without perform_every and perform_at", ExampleJob1.perform_now
+    assert_equal "example job with perform_every", ExampleJob2.perform_now
+    assert_equal "example job with perform_at", ExampleJob3.perform_now
+    assert_equal "example job with perform_every and perform_at", ExampleJob4.perform_now
+    assert_equal "example job with multiple perform_every and perform_at", ExampleJob5.perform_now
   end
 
   test "jobs are inserted into reflection store" do
     assert_equal 8, PerformEvery::Reflection.store.count
-   
+
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob2", typ: "interval", value: "10 minutes"))
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob3", typ: "timestamp", value: "October 1st, 2050"))
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob4", typ: "interval", value: "10 minutes"))
@@ -34,7 +34,7 @@ class PerformEvery::Test < ActiveSupport::TestCase
   test "persist jobs in database" do
     # create existing ExampleJob2
     now = Time.now.round # round to accommodate postgres precision
-    job2 = PerformEvery::Job.create!(job_name: "ExampleJob2", typ: "interval", value: "10 minutes", last_performed_at: now) 
+    job2 = PerformEvery::Job.create!(job_name: "ExampleJob2", typ: "interval", value: "10 minutes", last_performed_at: now)
 
     # persist all jobs, skip ExampleJob2
     PerformEvery::Scheduler.persist_jobs
@@ -43,7 +43,7 @@ class PerformEvery::Test < ActiveSupport::TestCase
 
     # confirm ExampleJob2 was skipped, because it already exists (see above)
     jobs = PerformEvery::Job.all
-    assert_equal now, jobs[ jobs.index(job2) ].last_performed_at
+    assert_equal now, jobs[jobs.index(job2)].last_performed_at
   end
 
   test "if jobs should be performed" do
@@ -53,9 +53,9 @@ class PerformEvery::Test < ActiveSupport::TestCase
     # don't perform if perform_at is nil
     assert !PerformEvery::Job.create(perform_at: nil, last_performed_at: nil).perform?(now)
 
-    # don't perform if job is marked as deprecated 
+    # don't perform if job is marked as deprecated
     assert !PerformEvery::Job.create(perform_at: now, last_performed_at: nil, deprecated: true).perform?(now)
-      
+
     # perform if a job that has never run before
     assert PerformEvery::Job.create(perform_at: now, last_performed_at: nil).perform?(now)
 
@@ -166,7 +166,7 @@ class PerformEvery::Test < ActiveSupport::TestCase
     job.add_history t1
     job.add_history t2
 
-    (PerformEvery::MAX_HISTORY-2).times do 
+    (PerformEvery::MAX_HISTORY - 2).times do
       job.add_history
     end
 
@@ -178,7 +178,7 @@ class PerformEvery::Test < ActiveSupport::TestCase
     assert_equal PerformEvery::MAX_HISTORY, job.history.count
     assert_equal t2.to_s, job.history[0]
 
-    100.times do 
+    100.times do
       job.add_history
     end
     assert_equal PerformEvery::MAX_HISTORY, job.history.count
@@ -263,5 +263,4 @@ class PerformEvery::Test < ActiveSupport::TestCase
     job = PerformEvery::Job.create(perform_at: now - 61.second, accuracy: 1.minute)
     assert job.too_old?(now)
   end
-
 end

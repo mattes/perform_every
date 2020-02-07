@@ -7,7 +7,7 @@ module PerformEvery
     # and https://github.com/rails/rails/blob/master/activerecord/lib/active_record/associations.rb
 
     class_methods do
-      def perform_every(interval, opts={})
+      def perform_every(interval, opts = {})
         j = Job.new
         j.job_name = self.name
         j.typ = "interval"
@@ -17,14 +17,14 @@ module PerformEvery
         if j.value.blank?
           raise "#{self.name}#perform_every needs interval"
         end
-        
+
         # TODO raise if perform method has parameters
         # Object.const_get(self.name).instance_method(:perform).parameters.flatten.count
 
         PerformEvery::Reflection.insert(j)
       end
 
-      def perform_at(timestamp, opts={})
+      def perform_at(timestamp, opts = {})
         j = Job.new
         j.job_name = self.name
         j.typ = "timestamp"
@@ -43,4 +43,3 @@ module PerformEvery
     end
   end
 end
-

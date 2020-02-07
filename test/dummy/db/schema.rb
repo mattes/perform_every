@@ -25,5 +25,4 @@ ActiveRecord::Schema.define(version: 2020_02_07_022209) do
     t.boolean "deprecated", default: false, null: false
     t.index ["job_name", "typ", "value"], name: "perform_every_unique_job", unique: true
   end
-
 end

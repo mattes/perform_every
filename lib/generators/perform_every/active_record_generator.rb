@@ -1,4 +1,3 @@
-
 module PerformEvery
   class ActiveRecordGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
@@ -8,7 +7,7 @@ module PerformEvery
       migration_template "migration.rb", "db/migrate/create_perform_every.rb"
     end
 
-    private 
+    private
 
     # see https://stackoverflow.com/questions/11079617/next-migration-number-notimplementederror-notimplementederror-using-wysihat
     def self.next_migration_number(dirname)

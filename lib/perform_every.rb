@@ -4,7 +4,7 @@ require "perform_every/reflection"
 require "perform_every/scheduler"
 require "perform_every/railtie"
 
-require 'fugit'
+require "fugit"
 
 ActiveSupport.on_load(:active_job) do
   require "perform_every/activejob"

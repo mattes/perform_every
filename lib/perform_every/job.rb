@@ -1,4 +1,4 @@
-require 'action_view'
+require "action_view"
 
 module PerformEvery
   class Job < ActiveRecord::Base
@@ -15,7 +15,7 @@ module PerformEvery
     end
 
     def from_reflection_store(attr)
-      s = PerformEvery::Reflection.find(self) 
+      s = PerformEvery::Reflection.find(self)
       return nil if s.nil?
       s.send(attr.to_sym)
     end
@@ -122,7 +122,7 @@ module PerformEvery
     def add_history(t = Time.now.utc)
       self.history ||= []
       self.history << t.to_s
-      self.history.shift(self.history.count - MAX_HISTORY) if self.history.count > MAX_HISTORY 
+      self.history.shift(self.history.count - MAX_HISTORY) if self.history.count > MAX_HISTORY
     end
 
     def perform_next_at
@@ -138,7 +138,7 @@ module PerformEvery
     def parse_interval_value
       raise "must be interval" if self.value.blank?
       interval = ::Fugit::Nat.parse("every " + self.value, multi: :fail)
-      raise "must be interval" if interval.blank? || !interval.is_a?(::Fugit::Cron) 
+      raise "must be interval" if interval.blank? || !interval.is_a?(::Fugit::Cron)
       return interval
     end
 
@@ -149,8 +149,8 @@ module PerformEvery
       return timestamp
     end
 
-    def == j
-      self.job_name == j.job_name && self.typ == j.typ && self.value == j.value  
+    def ==(j)
+      self.job_name == j.job_name && self.typ == j.typ && self.value == j.value
     end
 
     def perform_once?
@@ -165,6 +165,5 @@ module PerformEvery
       self.deprecated = true
       self.save!
     end
-
   end
 end
