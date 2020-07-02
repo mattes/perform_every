@@ -1,17 +1,16 @@
-require 'with_advisory_lock'
+require "with_advisory_lock"
 
 module PerformEvery
   class Scheduler
-
     def run_forever
       Zeitwerk::Loader.eager_load_all # make sure all jobs are loaded
 
       # trap SIGINT and SIGTERM signals for clean shutdown
       kill = false
-      Signal.trap("INT") {|s| kill = true }
-      Signal.trap("TERM") {|s| kill = true }
+      Signal.trap("INT") { |s| kill = true }
+      Signal.trap("TERM") { |s| kill = true }
 
-      # try to continuously acquire advisory lock so that only one worker 
+      # try to continuously acquire advisory lock so that only one worker
       # at a time will schedule jobs. wait 5 seconds for lock, then try again after 30 seconds.
       loop do
         Rails.logger.info "Leader election: waiting to become master ..."
@@ -26,7 +25,7 @@ module PerformEvery
 
           at_exit do
             Rails.logger.info "#{metrics}" unless metrics.blank?
-            Rails.logger.info "Bye" 
+            Rails.logger.info "Bye"
           end
 
           # start endless loop
@@ -37,9 +36,8 @@ module PerformEvery
             jobs = Job.where(:deprecated => false)
             jobs.each do |job|
 
-
               # check if job is still present in local job files
-              if Reflection.store.include?(job) 
+              if Reflection.store.include?(job)
                 op = job.perform!
                 metrics[op] ||= 0
                 metrics[op] += 1
@@ -72,7 +70,6 @@ module PerformEvery
           return if kill
           sleep 2
         end
-
       end # /loop around with_advisory_lock
     end
 
@@ -81,11 +78,14 @@ module PerformEvery
     # insert new jobs to database
     def self.persist_jobs
       return 0 if Reflection.store.blank?
-      Job.insert_all(Reflection.store.map{|j| { 
-        job_name: j.job_name, 
-        typ: j.typ, 
-        value: j.value, 
-        perform_at: j.perform_next_at} })
+      Job.insert_all(Reflection.store.map { |j|
+        {
+          job_name: j.job_name,
+          typ: j.typ,
+          value: j.value,
+          perform_at: j.perform_next_at,
+        }
+      })
       Reflection.store.count
     end
 
@@ -96,6 +96,5 @@ module PerformEvery
     def self.reset_jobs
       Job.connection.truncate(Job.table_name)
     end
-
   end
 end

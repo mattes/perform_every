@@ -4,5 +4,4 @@ class ExampleJob1 < ApplicationJob
   def perform
     "example job without perform_every and perform_at"
   end
-
 end

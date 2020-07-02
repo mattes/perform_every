@@ -1,5 +1,4 @@
 module PerformEvery
-
   module Reflection
     mattr_reader :store, default: []
 
@@ -13,8 +12,7 @@ module PerformEvery
     def self.find(job)
       i = @@store.index(job)
       return nil if i.nil?
-      @@store[i] 
+      @@store[i]
     end
   end
-
 end

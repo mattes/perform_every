@@ -1,8 +1,7 @@
 namespace :perform_every do
-
   desc "Run scheduler"
   task run: :environment do
-    s = PerformEvery::Scheduler.new 
+    s = PerformEvery::Scheduler.new
     s.run_forever
   end
 
@@ -15,5 +14,4 @@ namespace :perform_every do
   task reset: :environment do
     PerformEvery::Scheduler.reset_jobs
   end
-
 end
