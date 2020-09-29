@@ -18,9 +18,6 @@ module PerformEvery
           raise "#{self.name}#perform_every needs interval"
         end
 
-        # TODO raise if perform method has parameters
-        # Object.const_get(self.name).instance_method(:perform).parameters.flatten.count
-
         PerformEvery::Reflection.insert(j)
       end
 
@@ -34,9 +31,6 @@ module PerformEvery
         if j.value.blank?
           raise "#{self.name}#perform_at needs timestamp"
         end
-
-        # TODO raise if perform method has parameters
-        # Object.const_get(self.name).instance_method(:perform).parameters.flatten.count
 
         PerformEvery::Reflection.insert(j)
       end

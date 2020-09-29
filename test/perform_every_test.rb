@@ -10,16 +10,19 @@ class PerformEvery::Test < ActiveSupport::TestCase
     assert_kind_of Module, PerformEvery
   end
 
-  test "job can be scheduled normally somewhere in app" do
+  test "job can still be scheduled regularly" do
     assert_equal "example job without perform_every and perform_at", ExampleJob1.perform_now
     assert_equal "example job with perform_every", ExampleJob2.perform_now
     assert_equal "example job with perform_at", ExampleJob3.perform_now
     assert_equal "example job with perform_every and perform_at", ExampleJob4.perform_now
     assert_equal "example job with multiple perform_every and perform_at", ExampleJob5.perform_now
+    assert_equal "example job with a default variable: default", ExampleJob6.perform_now
+    assert_equal "example job with a default variable: foo", ExampleJob6.perform_now("foo")
+    assert_equal "example job with a variable: foo", ExampleJob7.perform_now("foo")
   end
 
   test "jobs are inserted into reflection store" do
-    assert_equal 8, PerformEvery::Reflection.store.count
+    assert_equal 12, PerformEvery::Reflection.store.count
 
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob2", typ: "interval", value: "10 minutes"))
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob3", typ: "timestamp", value: "October 1st, 2050"))
@@ -29,6 +32,10 @@ class PerformEvery::Test < ActiveSupport::TestCase
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob5", typ: "timestamp", value: "October 1st, 2050"))
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob5", typ: "interval", value: "3 days"))
     assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob5", typ: "timestamp", value: "October 2st, 2050"))
+    assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob6", typ: "interval", value: "10 minutes"))
+    assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob6", typ: "timestamp", value: "October 1st, 2050"))
+    assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob7", typ: "interval", value: "10 minutes"))
+    assert PerformEvery::Reflection.store.include?(PerformEvery::Job.new(job_name: "ExampleJob7", typ: "timestamp", value: "October 1st, 2050"))
   end
 
   test "persist jobs in database" do
@@ -39,7 +46,7 @@ class PerformEvery::Test < ActiveSupport::TestCase
     # persist all jobs, skip ExampleJob2
     PerformEvery::Scheduler.persist_jobs
     PerformEvery::Scheduler.persist_jobs # persist again
-    assert_equal 8, PerformEvery::Job.all.count
+    assert_equal 12, PerformEvery::Job.all.count
 
     # confirm ExampleJob2 was skipped, because it already exists (see above)
     jobs = PerformEvery::Job.all
@@ -262,5 +269,16 @@ class PerformEvery::Test < ActiveSupport::TestCase
 
     job = PerformEvery::Job.create(perform_at: now - 61.second, accuracy: 1.minute)
     assert job.too_old?(now)
+  end
+
+  test "enqueue_job" do
+    assert_instance_of ExampleJob1, PerformEvery::Helper.enqueue_job("ExampleJob1")
+    assert_instance_of ExampleJob2, PerformEvery::Helper.enqueue_job("ExampleJob2")
+    assert_instance_of ExampleJob3, PerformEvery::Helper.enqueue_job("ExampleJob3")
+    assert_instance_of ExampleJob4, PerformEvery::Helper.enqueue_job("ExampleJob4")
+    assert_instance_of ExampleJob5, PerformEvery::Helper.enqueue_job("ExampleJob5")
+    assert_instance_of ExampleJob6, PerformEvery::Helper.enqueue_job("ExampleJob6")
+
+    assert_instance_of ArgumentError, PerformEvery::Helper.enqueue_job("ExampleJob7")
   end
 end

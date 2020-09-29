@@ -79,11 +79,7 @@ module PerformEvery
       # call the actual job
       schedule_error = nil
       unless PerformEvery.dry_run
-        begin
-          Object.const_get(self.job_name).send(:perform_now)
-        rescue => e
-          schedule_error = e
-        end
+        schedule_error = enqueue_job(self.job_name)
       end
 
       # prepare debug log
